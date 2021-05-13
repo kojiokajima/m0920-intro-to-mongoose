@@ -8,14 +8,16 @@ exports.getAddProduct = (req, res, next) => {
 }
 
 exports.postAddProduct = (req, res, next) => {
-  const product = new Product(
-    req.body.title,
-    addZeroes(req.body.price),
-    req.body.description,
-    req.body.imageUrl
-  )
-  product.save()
-  res.redirect('/')
+  const product = new Product({
+    title: req.body.title,
+    price: req.body.price,
+    description: req.body.description,
+    imageUrl: req.body.imageUrl,
+    userid: req.user,
+  })
+  product.save().then(() => {
+    res.redirect('/')
+  }).catch(err => console.log(err))
 }
 
 exports.getEditProduct = (req, res, next) => {
@@ -37,32 +39,28 @@ exports.getEditProduct = (req, res, next) => {
 exports.postEditProduct = (req, res, next) => {
   const prodId = req.body.productId
   const updatedTitle = req.body.title
-  const updatePrice = req.body.price
-  const updateDesc = req.body.descrption
+  const updatedPrice = req.body.price
+  const updatedDesc = req.body.descrption
   const updatedImageUrl = req.body.imageUrl
 
-  const updatedProduct = new Product(
-    updatedTitle,
-    updatePrice,
-    updateDesc,
-    updatedImageUrl
-  )
-
-  updatedProduct.edit(prodId).then(() => {
-    //   res.redirect('/')
-    res.redirect('/show-product/'+prodId)
-  }).catch(err => console.log(err))
+  Product.findById(prodId).then((product) => {
+    product.title = updatedTitle
+    product.price = updatedPrice
+    product.desc = updatedDesc
+    product.imageUrl = updatedImageUrl
+    return product.save()
+  })
+  .then(() => {
+    res.redirect('/show-product/' + prodId)
+  })
+  .catch(err => console.log(err))
   
 }
 
 exports.deleteProduct = (req, res, next) => {
   const prodId = req.body.productId
-  Product.deleteById(prodId)
-  res.redirect('/')
-}
-
-function addZeroes(num) {
-  const dec = num.split('.')[1]
-  const len = dec && dec.length > 2 ? dec.length : 2
-  return Number(num).toFixed(len)
+  Product.findOneAndDelete(prodId).
+  then(() => {
+    res.redirect('/')
+  }).catch(err => console.log(err))
 }

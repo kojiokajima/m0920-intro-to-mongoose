@@ -5,15 +5,15 @@
 
     <main>
         <div>
-            <h1><%= product.title %></h1>
+            <h1><%=product.title%></h1>
             <hr>
-            <h3><%= product.price %></h3>
+            <h3><%=product.price%></h3>
 
             <a href="/admin/edit-product/<%= product._id%>?edit=true" class="btn">Edit</a>
                 
             </form>
 
-            <form action="/delete-product" method="POST">
+            <form action="/admin/delete-product" method="POST">
                 <button class="btn">Delete</button>
                 <input type="hidden" name="productId" value="<%=product._id%>" />
             </form>
