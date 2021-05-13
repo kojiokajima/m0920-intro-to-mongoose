@@ -17,6 +17,13 @@ router.get('/show-product/:id', shopController.getOneProductById)
 // @route   GET /cart
 // @desc    Get products added in cart by a user
 // @access  Public
+router.get('/cart', shopController.getCart)
+
+// @route   POST /cart
+// @desc    For users to add a product in a cart
+// @access  Public
 router.post('/cart', shopController.postCart)
+
+router.post('/cart-delete-item', shopController.postCartDeleteProduct)
 
 module.exports = router;
